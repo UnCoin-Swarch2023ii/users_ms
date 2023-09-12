@@ -10,32 +10,45 @@ User Register
 
 This is a REST API using  the following technologies:.
 
-*java
-*maven
-*postgresSQL
-*SpringBoot
-*docker
+* java
+* maven
+* postgresSQL
+* SpringBoot
+* docker
 
-##Project Structure
+## Project Structure
 .
-├── package.json
-├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
-└── src
-    ├── main
-    └── java
-        ├── application
-        └── infrastructure
-        ├── controller
-        └── transaction.ctrl.ts
-        ├── entity
-            │   └── transaction.model.ts
-            ├── repository
-            │   └── sequelize.repository.ts
-            ├── services
-                └── paypal.gateway.ts
-##Endpoints
+├───.idea
+│   ├───dataSources
+│   └───httpRequests
+├───.mvn
+│   └───wrapper
+└───src
+    ├───main
+    │   ├───java
+    │   │   └───com
+    │   │       └───example
+    │   │           └───Users
+    │   │               ├───controller
+    │   │               ├───entity
+    │   │               ├───exceptions
+    │   │               ├───repository
+    │   │               ├───response
+    │   │               ├───security
+    │   │               │   └───config
+    │   │               └───service
+    │   └───resources
+    │       ├───db
+    │       │   └───migration
+    │       ├───static
+    │       └───templates
+    └───test
+        └───java
+            └───com
+                └───example
+                    └───Users
+
+## Endpoints
 POST http://localhost:8080/api/v1/user/signup
 
 DELETE http://localhost:8080/api/v1/user/delete/{{document}}
