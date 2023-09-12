@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  users_db:
+    container_name: db
+    image: postgres:16rc1-alpine3.18
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+  api:
+    container_name: users_ms
+    image: spring-boot-api-tutorial-img
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: always
+
+volumes:
+  postgres_data:
