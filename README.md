@@ -17,7 +17,7 @@ This is a REST API using  the following technologies:.
 * docker
 
 ## Project Structure
-.
+```
 ├───.idea
 │   ├───dataSources
 │   └───httpRequests
@@ -47,7 +47,7 @@ This is a REST API using  the following technologies:.
             └───com
                 └───example
                     └───Users
-
+```
 ## Endpoints
 POST http://localhost:8080/api/v1/user/signup
 
