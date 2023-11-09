@@ -7,8 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 import org.springframework.context.annotation.Bean;
@@ -21,10 +20,13 @@ class WebSecurityConfig  extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .httpBasic().disable()
+        http.authorizeRequests()
+                .antMatchers("**").permitAll() // Allow unauthenticated access
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic()
+                .and()
                 .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("*").permitAll();
+                .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

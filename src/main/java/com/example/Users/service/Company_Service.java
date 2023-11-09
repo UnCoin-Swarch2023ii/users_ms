@@ -1,73 +1,66 @@
 package com.example.Users.service;
-
-import com.example.Users.entity.Authentication_Token_Company;
-import com.example.Users.entity.Company;
+import com.example.Users.response.ResponseSign;
+import com.example.Users.security.config.JWTUtil;
+import com.example.Users.entity.Company ;
+import com.example.Users.repository.Company_Repository;
 import com.example.Users.exceptions.Authentication_Fail_Exception;
 import com.example.Users.exceptions.Custom_Exception;
-import com.example.Users.repository.Company_Repository;
 import com.example.Users.response.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Objects;
-
 
 @Service
 @AllArgsConstructor
 public class Company_Service {
-    private final Authentication_Service authenticationService = new Authentication_Service();
-    private final Company_Repository appCompanyRepository;
+
+    private final Company_Repository CompanyRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    public UserDetails loadCompanyByUsername(int document)
-            throws UsernameNotFoundException {
-        return appCompanyRepository.findCompanyByDocumentIs((document))
+    public UserDetails loadCompanyByUsername(int document) throws UsernameNotFoundException {
+        return CompanyRepository.findCompanyByNITIs(document)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 String.format("La empresa con el NIT %s no fue encontrada", document)));
     }
-    public ResponseDto signUpCompany(Company appCompany) {
-        boolean companyExists = appCompanyRepository
-                .findCompanyByDocumentIs(appCompany.getDocument())
+
+    public ResponseSign signUpCompany(Company mongoCompany) {
+        System.out.println(mongoCompany.getNIT());
+        boolean companyExists = CompanyRepository
+                .findCompanyByNITIs(mongoCompany.getNIT())
                 .isPresent();
 
         if (companyExists) {
-            throw new IllegalStateException("la empresa con este NIT ya existe");
+            throw new IllegalStateException("La empresa con este NIT ya existe");
         }
 
-        String encodedPassword = bCryptPasswordEncoder
-                .encode(appCompany.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(mongoCompany.getPassword());
 
-        appCompany.setPassword(encodedPassword);
+        mongoCompany.setPassword(encodedPassword);
+        mongoCompany.setCompanyName(mongoCompany.getUsername());
+        mongoCompany.setNIT(mongoCompany.getNIT());
+        CompanyRepository.save(mongoCompany);
+        final String jwt = JWTUtil.generateTokenC(mongoCompany);
 
-        appCompanyRepository.save(appCompany);
-
-        //final Authentication_Token_Company authenticationToken = new Authentication_Token_Company(appCompany);
-
-        //authenticationService.saveConfirmationTokenCompany(authenticationToken);
-
-        return new ResponseDto("exito", "empresa creada");
+        return new ResponseSign(jwt,mongoCompany);
     }
-    public ResponseDto signInUser(Company appCompany){
-        Company company = (Company) loadCompanyByUsername(appCompany.getDocument());
+
+    public ResponseSign signInUser(Company mongoCompany) {
+        Company company = (Company) loadCompanyByUsername(mongoCompany.getNIT());
 
         if (Objects.isNull(company)) {
             throw new Authentication_Fail_Exception("La empresa no se encuentra registrada");
         }
 
-        if (!bCryptPasswordEncoder.matches(appCompany.getPassword(), company.getPassword())) {
-            throw new Authentication_Fail_Exception("La contraseña es incorrecta, vuelva a intentarlo");
+        if (!bCryptPasswordEncoder.matches(mongoCompany.getPassword(), company.getPassword())) {
+            throw new Authentication_Fail_Exception("La contraseña es incorrecta, por favor vuelva a intentarlo");
         }
-       // Authentication_Token_Company token = authenticationService.getTokenCompany(company);
-
-       // if (Objects.isNull(token)) {
-       //     throw new Custom_Exception("token no esta presente");
-       // }
-
-       return new ResponseDto("exito", "empresa ingreso correctamente");
-
+        final String jwt = JWTUtil.generateTokenC(company);
+        return new ResponseSign(jwt,company);
     }
+
+
 }

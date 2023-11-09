@@ -1,37 +1,30 @@
-package com.example.Users.entity;
+package com.example.Users.entity; // Adjust package as needed
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
-@Entity
+
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Table(name="users")
+@Document(collection = "users") // Specify the MongoDB collection name
 public class User implements UserDetails {
 
     @Id
-
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "user_name")
-    private String user_name;
-    @Column(name = "user_lastname")
-    private String user_lastname;
-    @Column(name = "document", length = 12)
+    private String id;
+    private String userName;
+    private String userLastName;
     private int document;
-    @Column(name = "balance")
     private float balance;
-    @Column(name = "password")
     private String password;
     private Boolean enabled = false;
 
@@ -39,26 +32,23 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
     }
+
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
-        return user_name;
-    }
-    public void setId(Long id) {
-        this.id = id;
+        return userName;
     }
 
-    public Long getId() {
-        return id;
-    }
 
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -73,12 +63,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-	public int getDocument() {
-		// TODO Auto-generated method stub
-		return document;
-	}
-	public void setPassword(String encodedPassword) {
-		this.password = encodedPassword;
-		
-	}
+
+    public int getDocument() {
+        return document;
+    }
+
+    public void setPassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
+

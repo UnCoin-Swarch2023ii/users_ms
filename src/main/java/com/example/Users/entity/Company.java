@@ -1,53 +1,52 @@
-package com.example.Users.entity;
+package com.example.Users.entity; // Adjust package as needed
 
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 
-@Entity
-@Table(name="Company")
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@Document(collection = "companies") // Specify the MongoDB collection name
 public class Company implements UserDetails {
 
     @Id
-
-    @Column(name = "company_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "company_name",nullable = false)
-    private String company_name;
-    @Column(name = "NIT")
-    private int document;
-    @Column(name = "password")
+    private String id;
+    private String companyName;
+    private int NIT;
     private String password;
-    @Column(name = "balance")
     private float balance;
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public Long getId() {
-        return id;
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
     }
+
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
-        return company_name;
+        return companyName;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -63,11 +62,21 @@ public class Company implements UserDetails {
         return true;
     }
 
-    public int getDocument() {
-        return document;
+    public int getNIT() {
+        return NIT;
     }
 
+    public float getBalance() {
+        return balance;
+    }
+    public void setNIT(int NIT){this.NIT = NIT;}
+
+
     public void setPassword(String encodedPassword) {
-        this.password =encodedPassword;
+        this.password = encodedPassword;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

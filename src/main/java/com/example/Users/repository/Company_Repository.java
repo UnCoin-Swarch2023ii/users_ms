@@ -1,18 +1,18 @@
 package com.example.Users.repository;
 
-import com.example.Users.entity.Company;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.Users.entity.Company; // Import the MongoDB entity
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import com.example.Users.entity.*;
+
 import java.util.Optional;
+
 @Repository
-@Transactional(readOnly = true)
-public interface Company_Repository extends JpaRepository<Company, Long> {
-
-    Optional<Company> findCompanyByDocumentIs(int document);
-
-
+public interface Company_Repository extends MongoRepository<Company, String> {
+    Optional<Company> findCompanyByNITIs(int NIT);
 }
+
+
+
 
 
